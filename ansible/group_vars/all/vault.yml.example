@@ -1,0 +1,4 @@
+---
+# Copy to vault.yml, put a real password here, then encrypt it:
+#   ansible-vault encrypt group_vars/all/vault.yml
+vault_postgres_password: change-me

@@ -1,0 +1,19 @@
+# Secrets
+.env
+*.pem
+*.key
+ansible/group_vars/all/vault.yml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/

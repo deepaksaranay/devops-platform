@@ -1,0 +1,9 @@
+---
+repo_url: https://github.com/YOUR-USER/devops-platform.git
+repo_version: main
+app_dir: /opt/devops-platform
+
+postgres_user: app
+postgres_db: appdb
+# The real value lives in the encrypted file group_vars/all/vault.yml (see README).
+postgres_password: "{{ vault_postgres_password }}"

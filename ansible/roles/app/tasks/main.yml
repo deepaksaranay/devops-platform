@@ -1,0 +1,33 @@
+---
+- name: Get the application code
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_dir }}"
+    version: "{{ repo_version }}"
+  notify: Restart the stack
+
+- name: Write the environment file (contains the database password)
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ app_dir }}/.env"
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart the stack
+
+- name: Start the stack
+  ansible.builtin.command:
+    cmd: docker compose up -d --build
+    chdir: "{{ app_dir }}"
+  register: app_compose_up
+  # Compose reports what it did on stderr. Anything other than "already running" is a change.
+  changed_when: "'Creating' in app_compose_up.stderr or 'Recreated' in app_compose_up.stderr"
+
+- name: Check that the application answers
+  ansible.builtin.uri:
+    url: http://localhost:8080/health
+    status_code: 200
+  register: app_health
+  retries: 15
+  delay: 4
+  until: app_health.status == 200

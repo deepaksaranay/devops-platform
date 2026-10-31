@@ -1,0 +1,10 @@
+# Keeps at least one pod running while nodes are drained or upgraded.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: api

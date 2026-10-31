@@ -1,0 +1,33 @@
+groups:
+  - name: api
+    rules:
+      - alert: ApiDown
+        expr: up{job="api"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "The API is not responding to Prometheus"
+          runbook: "docs/runbook.md#apidown"
+
+      - alert: HighErrorRate
+        expr: >
+          sum(rate(http_requests_total{status=~"5.."}[1m]))
+          / sum(rate(http_requests_total[1m])) > 0.05
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "More than 5% of requests are failing"
+          runbook: "docs/runbook.md#higherrorrate"
+
+      - alert: HighLatency
+        expr: >
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[1m])) by (le)) > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "95th percentile latency is above 500 ms"
+          runbook: "docs/runbook.md#highlatency"
